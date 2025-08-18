@@ -1,0 +1,80 @@
+﻿<Window x:Class="SalesTrackingSystem.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SalesTrackingSystem.ViewModels"
+        mc:Ignorable="d"
+        Title="Sales Tracker" Height="452" Width="1440">
+
+    <Window.DataContext>
+        <vm:SalesViewModel />
+    </Window.DataContext>
+
+    <DockPanel Margin="10">
+
+        <!-- INPUTS -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical" Margin="0,0,0,10">
+
+            <!-- Orders row -->
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="JustEat Orders:" Width="120" VerticalAlignment="Center"/>
+                <TextBox Width="100" Text="{Binding OrdersJustEatInput, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Uber Orders:" Width="120" Margin="20,0,0,0" VerticalAlignment="Center"/>
+                <TextBox Width="100" Text="{Binding OrdersUberInput, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Deliveroo Orders:" Width="140" Margin="20,0,0,0" VerticalAlignment="Center"/>
+                <TextBox Width="100" Text="{Binding OrdersDeliverooInput, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+
+            <!-- Amounts row -->
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="JustEat Amount (£):" Width="120" VerticalAlignment="Center"/>
+                <TextBox Width="100" Text="{Binding AmountJustEatInput, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+
+                <TextBlock Text="Uber Amount (£):" Width="120" Margin="20,0,0,0" VerticalAlignment="Center"/>
+                <TextBox Width="100" Text="{Binding AmountUberInput, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" />
+
+                <TextBlock Text="Deliveroo Amount (£):" Width="140" Margin="20,0,0,0" VerticalAlignment="Center"/>
+                <TextBox Width="100" Text="{Binding AmountDeliverooInput, UpdateSourceTrigger=PropertyChanged,StringFormat=N2}" />
+            </StackPanel>
+
+            <Button Content="Save" Command="{Binding SaveCommand}" Width="120" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+            <Button Content="Weekly Sales" Command="{Binding OpenWeeklySalesCommand}" Width="120" Margin="10,10,10,10" HorizontalAlignment="Center"/>
+
+        </StackPanel>
+
+        <!-- GRID -->
+        <DataGrid ItemsSource="{Binding Sales}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  Margin="0,10,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="*" />
+                <DataGridTextColumn Header="Orders JustEat" Binding="{Binding OrdersJustEat}" Width="120"/>
+                <DataGridTextColumn Header="Orders Uber" Binding="{Binding OrdersUber}" Width="120"/>
+                <DataGridTextColumn Header="Orders Deliveroo" Binding="{Binding OrdersDeliveroo}" Width="140"/>
+
+                <DataGridTextColumn Header="Amount JustEat" Binding="{Binding AmountJustEat, StringFormat={}{0:C2}, ConverterCulture=en-GB}" Width="140"/>
+                <DataGridTextColumn Header="Amount Uber" Binding="{Binding AmountUber, StringFormat={}{0:C2}, ConverterCulture=en-GB}" Width="140"/>
+                <DataGridTextColumn Header="Amount Deliveroo" Binding="{Binding AmountDeliveroo, StringFormat={}{0:C2}, ConverterCulture=en-GB}" Width="160"/>
+
+                <DataGridTextColumn Header="Total Orders" Binding="{Binding TotalOrders}" Width="120"/>
+                <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat={}{0:C2}, ConverterCulture=en-GB}" Width="140"/>
+
+                <DataGridTemplateColumn Header="Actions" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete"
+                                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}" 
+                                    Width="60"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </DockPanel>
+</Window>
