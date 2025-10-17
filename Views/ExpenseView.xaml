@@ -1,0 +1,42 @@
+﻿<Window x:Class="SalesTrackingSystem.Views.ExpenseView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:SalesTrackingSystem.ViewModels"
+        mc:Ignorable="d"
+        Title="Expense Tracker" Height="450" Width="700">
+ 
+    
+    <DockPanel Margin="10">
+        <!-- Input Panel -->
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
+            <DatePicker SelectedDate="{Binding NewExpense.Date}" Width="120"/>
+            <ComboBox Width="120" ItemsSource="{Binding Categories}" SelectedItem="{Binding NewExpense.Category}" />
+            <!-- Bind enum values from VM -->
+            <ComboBox Width="120"
+          ItemsSource="{Binding PaymentMethods}"
+          SelectedItem="{Binding NewExpense.PaymentType, Mode=TwoWay}"
+          DisplayMemberPath="" />
+
+            <TextBox Width="100" Text="{Binding NewExpense.Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}"/>
+            <Button Content="Add" Width="80" Command="{Binding AddExpenseCommand}"/>
+            <Button Content="Clear" Width="80" Command="{Binding ClearCommand}"/>
+        </StackPanel>
+        <!-- Expenses DataGrid -->
+        <DataGrid ItemsSource="{Binding Expenses}" AutoGenerateColumns="False" CanUserAddRows="False" DockPanel.Dock="Top" Height="250">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=d}"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}"/>
+                <DataGridTextColumn Header="Payment" Binding="{Binding PaymentType}"/>
+                <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat=£{0:N2}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <!-- Totals -->
+        <StackPanel Orientation="Vertical" Margin="10">
+            <TextBlock Text="{Binding TotalCash, StringFormat=Total Cash: £{0:F2}}" FontWeight="Bold" />
+            <TextBlock Text="{Binding TotalCard, StringFormat=Total Card: £{0:F2}}" FontWeight="Bold" />
+            <TextBlock Text="{Binding TotalAmount, StringFormat=Grand Total: £{0:F2}}" FontWeight="Bold" />
+        </StackPanel>
+    </DockPanel>
+</Window>
