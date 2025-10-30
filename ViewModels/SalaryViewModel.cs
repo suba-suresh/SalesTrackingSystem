@@ -113,7 +113,7 @@ namespace SalesTrackingSystem.ViewModels
                 return;
             }
 
-            if (_context.Employee.Any(e => e.Name.ToLower() == EmployeeName.ToLower()))
+            if (_context.Employees.Any(e => e.Name.ToLower() == EmployeeName.ToLower()))
             {
                 MessageBox.Show($"Employee name '{EmployeeName}' already exists. Please use a different name.", "Duplicate Name", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -133,7 +133,7 @@ namespace SalesTrackingSystem.ViewModels
                 HoursWorked = HoursWorked
             };
 
-            _context.Employee.Add(employee);
+            _context.Employees.Add(employee);
             _context.SaveChanges();
 
             var newSalary = new Salary

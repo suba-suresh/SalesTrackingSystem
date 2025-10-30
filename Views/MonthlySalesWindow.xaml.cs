@@ -12,7 +12,7 @@ namespace SalesTrackingSystem.Views
         public MonthlySalesWindow(System.Collections.ObjectModel.ObservableCollection<SalesTrackingSystem.Models.SaleRecord> sales)
         {
             InitializeComponent();
-            DataContext = new MonthlySalesViewModel(sales);
+            DataContext = new MonthlySalesViewModel();
         }
 
         private void Print_Click(object sender, RoutedEventArgs e)

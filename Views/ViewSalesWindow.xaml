@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:SalesTrackingSystem.ViewModels"
         mc:Ignorable="d"
         Title="Sales Analytics"
+        Icon="/Images/logo.ico"
         Height="650" Width="1100"
         WindowStartupLocation="CenterScreen"
         Background="#FAFAFA">
@@ -69,9 +70,18 @@
             <Button Content="Monthly View" Command="{Binding MonthlyViewCommand}" Style="{StaticResource FilterButtonStyle}" Margin="10,0"/>
             <Button Content="Yearly View" Command="{Binding YearlyViewCommand}" Style="{StaticResource FilterButtonStyle}" Margin="10,0"/>
             <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource FilterButtonStyle}" Margin="10,0"/>
-            <Button Content="Print Grid" Command="{Binding PrintCommand}"
-                    Background="#E91E63" Foreground="White" Margin="20,0,0,0" Width="120" Height="30" FontWeight="Bold"/>
+
+            <!-- Changed to Click handler so the view builds and prints a FlowDocument -->
+            <Button Content="Print Grid"
+            Click="Print_Click"
+            Background="#E91E63"
+            Foreground="White"
+            Margin="20,0,0,0"
+            Width="120"
+            Height="30"
+            FontWeight="Bold"/>
         </StackPanel>
+
 
         <!-- SUMMARY CARDS -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">

@@ -1,18 +1,20 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SalesTrackingSystem.Models
 {
-    public enum PaymentMethod
-    {
-        Cash,
-        Card
-    }
-
+    [Table("Expenses")]
     public class Expense
     {
-        public DateTime Date { get; set; } = DateTime.Today;
-        public string Category { get; set; } = string.Empty;
-        public PaymentMethod PaymentType { get; set; } = PaymentMethod.Cash;
+        [Key]
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        [Required]
+        public string Category { get; set; }
+        [Required]
+        public string PaymentType { get; set; }
+        [Column(TypeName = "decimal")]
         public decimal Amount { get; set; }
     }
 }

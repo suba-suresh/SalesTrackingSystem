@@ -13,7 +13,7 @@ namespace SalesTrackingSystem.Views
         public WeeklySalesWindow(ObservableCollection<SaleRecord> sales)
         {
             InitializeComponent();
-            DataContext = new WeeklySalesViewModel(sales);
+            DataContext = new WeeklySalesViewModel();
         }
 
         private void Print_Click(object sender, RoutedEventArgs e)

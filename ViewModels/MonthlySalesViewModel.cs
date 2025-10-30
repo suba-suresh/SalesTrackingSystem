@@ -1,7 +1,9 @@
 ﻿using SalesTrackingSystem.Commands;
+using SalesTrackingSystem.Data;  // ✅ For AppDbContext
 using SalesTrackingSystem.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity; // ✅ For DbFunctions
 using System.Linq;
 using System.Windows.Input;
 
@@ -9,11 +11,11 @@ namespace SalesTrackingSystem.ViewModels
 {
     public class MonthlySalesViewModel : BaseViewModel
     {
-        private readonly ObservableCollection<SaleRecord> _allSales;
+        private readonly AppDbContext _context; // ✅ Add this
 
-        public MonthlySalesViewModel(ObservableCollection<SaleRecord> sales)
+        public MonthlySalesViewModel()
         {
-            _allSales = sales ?? new ObservableCollection<SaleRecord>();
+            _context = new AppDbContext(); // ✅ Initialize DB connection
             SelectedDate = DateTime.Today;
             LoadMonthCommand = new RelayCommand(o => LoadMonth());
             LoadMonth();
@@ -49,10 +51,12 @@ namespace SalesTrackingSystem.ViewModels
             var firstDay = new DateTime(year, month, 1);
             var lastDay = firstDay.AddMonths(1).AddDays(-1);
 
-            // Filter only current month sales
-            var monthSales = _allSales.Where(s => s.Date.Year == year && s.Date.Month == month).ToList();
+            // ✅ Fetch data directly from the DB
+            var monthSales = _context.Sales
+                .Where(s => s.Date.Year == year && s.Date.Month == month)
+                .ToList();
 
-            // --- Aggregate totals ---
+            // Aggregations
             TotalOrders = (int)monthSales.Sum(s => s.TotalOrders);
             TotalRevenue = monthSales.Sum(s => s.TotalAmount);
             AverageDailySales = monthSales.GroupBy(s => s.Date.Date).Any()
@@ -66,7 +70,7 @@ namespace SalesTrackingSystem.ViewModels
                 .FirstOrDefault();
             HighestDayDisplay = bestDay == null ? "—" : $"{bestDay.Date:dd MMM}: £{bestDay.Amount:F2}";
 
-            // --- Group by week (1–4) ---
+            // Weekly breakdown
             var list = new ObservableCollection<WeeklyBreakdownItem>();
             int weekNumber = 1;
             DateTime weekStart = firstDay;

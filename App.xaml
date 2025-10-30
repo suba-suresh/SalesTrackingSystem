@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:SalesTrackingSystem"
              StartupUri="Views/HomeWindow.xaml">
     <Application.Resources>
-         
+        <!-- Styles removed: no merged dictionaries referencing deleted files -->
+        <ResourceDictionary/>
     </Application.Resources>
 </Application>

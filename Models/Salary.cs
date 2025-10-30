@@ -6,15 +6,17 @@ using System.Runtime.CompilerServices;
 
 namespace SalesTrackingSystem.Models
 {
+    [Table("Salaries")]
     public class Salary : INotifyPropertyChanged
     {
         private int _id;
-        private int _employeeId;
+        private int? _employeeId;
         private decimal _hourlyRate;
         private decimal _hoursWorked;
         private decimal _totalPay;
         private DateTime _payDate;
         private string _notes;
+        private string _position;
 
         [Key]
         public int Id
@@ -24,13 +26,15 @@ namespace SalesTrackingSystem.Models
         }
 
         [ForeignKey("Employee")]
-        public int EmployeeId
+        public int? EmployeeId
         {
             get => _employeeId;
             set { _employeeId = value; OnPropertyChanged(nameof(EmployeeId)); }
         }
 
         public virtual Employee Employee { get; set; }
+
+      
 
         [Column(TypeName = "decimal")]
         public decimal HourlyRate
@@ -64,6 +68,9 @@ namespace SalesTrackingSystem.Models
             get => _notes;
             set { _notes = value; OnPropertyChanged(); }
         }
+
+        // NO EmployeeName property - it doesn't exist in database
+        // Use Employee.Name from the relationship instead
 
         private void UpdateTotal()
         {
