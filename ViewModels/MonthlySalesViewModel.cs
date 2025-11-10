@@ -1,9 +1,9 @@
 ﻿using SalesTrackingSystem.Commands;
-using SalesTrackingSystem.Data;  // ✅ For AppDbContext
+using SalesTrackingSystem.Data; 
 using SalesTrackingSystem.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity; // ✅ For DbFunctions
+using System.Data.Entity; 
 using System.Linq;
 using System.Windows.Input;
 
@@ -11,11 +11,11 @@ namespace SalesTrackingSystem.ViewModels
 {
     public class MonthlySalesViewModel : BaseViewModel
     {
-        private readonly AppDbContext _context; // ✅ Add this
+        private readonly AppDbContext _context; 
 
         public MonthlySalesViewModel()
         {
-            _context = new AppDbContext(); // ✅ Initialize DB connection
+            _context = new AppDbContext(); //  Initialize DB connection
             SelectedDate = DateTime.Today;
             LoadMonthCommand = new RelayCommand(o => LoadMonth());
             LoadMonth();
@@ -51,7 +51,7 @@ namespace SalesTrackingSystem.ViewModels
             var firstDay = new DateTime(year, month, 1);
             var lastDay = firstDay.AddMonths(1).AddDays(-1);
 
-            // ✅ Fetch data directly from the DB
+            //  Fetch data directly from the DB
             var monthSales = _context.Sales
                 .Where(s => s.Date.Year == year && s.Date.Month == month)
                 .ToList();

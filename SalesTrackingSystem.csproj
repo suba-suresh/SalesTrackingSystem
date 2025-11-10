@@ -92,7 +92,6 @@
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\Salary.cs" />
-    <Compile Include="Models\SaleRecord.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ExpenseViewModel.cs" />
     <Compile Include="ViewModels\MonthlySalesViewModel.cs" />
@@ -186,7 +185,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Styles\" />
+    <Content Include="ViewModels\SalesTrackingSystem.exe" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\logo.ico" />

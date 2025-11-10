@@ -30,7 +30,7 @@ namespace SalesTrackingSystem.ViewModels
             }
         }
 
-        // --- Input fields (use decimal to match DB model types) ---
+       
         private DateTime _dateInput = DateTime.Today;
         public DateTime DateInput
         {
@@ -94,7 +94,7 @@ namespace SalesTrackingSystem.ViewModels
             set { _amountInHouseInput = value; OnPropertyChanged(); UpdateButtonStates(); }
         }
 
-        // Date filter (calendar) if you keep this in main UI
+        
         private DateTime? _filterDate;
         public DateTime? FilterDate
         {
@@ -132,7 +132,7 @@ namespace SalesTrackingSystem.ViewModels
             set { _canDelete = value; OnPropertyChanged(); }
         }
 
-        // Internal unfiltered cache
+       
         private List<SaleRecord> _allSales = new List<SaleRecord>();
 
         public SalesViewModel()
@@ -263,7 +263,7 @@ namespace SalesTrackingSystem.ViewModels
 
                 MessageBox.Show("Record updated successfully!", "Updated", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // after update, switch to add/new mode (optional)
+                
                 ClearForm();
             }
             catch (Exception ex)
@@ -272,7 +272,7 @@ namespace SalesTrackingSystem.ViewModels
             }
         }
 
-        // Delete (parameter is the row)
+        // Delete 
         private void DeleteRecord(object parameter)
         {
             SaleRecord toDelete = null;

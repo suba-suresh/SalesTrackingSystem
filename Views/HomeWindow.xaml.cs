@@ -1,18 +1,18 @@
 ﻿using System.Windows;
-using SalesTrackingSystem.Views;  // ✅ Access to all views
+using SalesTrackingSystem.Views;  
 using System.Collections.ObjectModel;
 using SalesTrackingSystem.Models;
 namespace SalesTrackingSystem.Views
 {
     public partial class HomeWindow : Window
     {
-        // Add a field or property to hold the sales collection
+        
         private ObservableCollection<SaleRecord> _sales = new ObservableCollection<SaleRecord>();
 
         public HomeWindow()
         {
             InitializeComponent();
-            // Optionally, initialize _sales here or load from a data source
+           
         }
 
         private void OpenSales_Click(object sender, RoutedEventArgs e)

@@ -1,4 +1,4 @@
-﻿// File: Views/ViewSalesWindow.xaml.cs
+﻿
 using SalesTrackingSystem.ViewModels;
 using System;
 using System.Globalization;
@@ -21,7 +21,7 @@ namespace SalesTrackingSystem.Views
 
         private void Print_Click(object sender, RoutedEventArgs e)
         {
-            // Get ViewModel
+         
             if (!(this.DataContext is ViewSalesViewModel vm))
             {
                 MessageBox.Show("Unable to print: ViewModel not found.", "Print Error", MessageBoxButton.OK, MessageBoxImage.Error);

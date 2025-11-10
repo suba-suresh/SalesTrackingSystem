@@ -16,7 +16,7 @@ namespace SalesTrackingSystem.Models
         private decimal _totalPay;
         private DateTime _payDate;
         private string _notes;
-        private string _position;
+        
 
         [Key]
         public int Id
@@ -69,8 +69,7 @@ namespace SalesTrackingSystem.Models
             set { _notes = value; OnPropertyChanged(); }
         }
 
-        // NO EmployeeName property - it doesn't exist in database
-        // Use Employee.Name from the relationship instead
+ 
 
         private void UpdateTotal()
         {

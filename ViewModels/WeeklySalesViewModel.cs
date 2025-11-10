@@ -1,9 +1,9 @@
 ﻿using SalesTrackingSystem.Commands;
-using SalesTrackingSystem.Data;  // ✅ Add this for AppDbContext
+using SalesTrackingSystem.Data;  
 using SalesTrackingSystem.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity; // ✅ Needed for DbFunctions
+using System.Data.Entity; 
 using System.Linq;
 using System.Windows.Input;
 
@@ -11,11 +11,11 @@ namespace SalesTrackingSystem.ViewModels
 {
     public class WeeklySalesViewModel : BaseViewModel
     {
-        private readonly AppDbContext _context; // ✅ Add this
+        private readonly AppDbContext _context;
 
         public WeeklySalesViewModel()
         {
-            _context = new AppDbContext(); // ✅ Initialize DB connection
+            _context = new AppDbContext(); 
             SelectedDate = DateTime.Today;
             LoadWeekCommand = new RelayCommand(o => LoadWeek());
             LoadWeek();
@@ -47,7 +47,7 @@ namespace SalesTrackingSystem.ViewModels
             WeekStart = selected.AddDays(-deltaToMonday);
             var weekEnd = WeekStart.AddDays(6);
 
-            // ✅ Fetch data directly from database for the selected week
+            //  Fetch data directly from database for the selected week
             var salesInWeek = _context.Sales
                 .Where(s => DbFunctions.TruncateTime(s.Date) >= WeekStart &&
                             DbFunctions.TruncateTime(s.Date) <= weekEnd)

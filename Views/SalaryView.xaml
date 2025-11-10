@@ -4,11 +4,11 @@
         Title="Employee Salary Management"
         Icon="/Images/logo.ico"
         Height="650" Width="1000"
+        MinHeight="600" MinWidth="900"
         WindowStartupLocation="CenterScreen"
         Background="#FAFAFA">
 
     <Grid Margin="20">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Header -->
@@ -17,11 +17,12 @@
             <RowDefinition Height="*"/>
             <!-- DataGrid -->
             <RowDefinition Height="Auto"/>
-            <!-- Footer Buttons -->
+            <!-- Footer -->
         </Grid.RowDefinitions>
 
         <!-- HEADER -->
-        <TextBlock Text="Employee Salary Management"
+        <TextBlock Grid.Row="0"
+                   Text="Employee Salary Management"
                    FontSize="26"
                    FontWeight="Bold"
                    Foreground="#333"
@@ -35,114 +36,118 @@
                 BorderBrush="#DDD"
                 BorderThickness="1"
                 Margin="0,10,0,20">
-            <StackPanel Orientation="Vertical">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical">
 
-                <!-- EMPLOYEE NAME -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Employee Name:" Width="150" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding EmployeeName, UpdateSourceTrigger=PropertyChanged}"
-                             Width="250"
-                             Height="28"
-                             Margin="0,0,10,0"/>
-                </StackPanel>
+                    <!-- EMPLOYEE NAME -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <TextBlock Text="Employee Name:" Width="160" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding EmployeeName, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="250"
+                                 Height="28"
+                                 Margin="0,0,10,0"/>
+                    </StackPanel>
 
-                <!-- HOURLY RATE -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Hourly Rate:" Width="150" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding HourlyRate, UpdateSourceTrigger=PropertyChanged}"
-                             Width="150"
-                             Height="28"
-                             Margin="0,0,10,0"/>
-                </StackPanel>
+                    <!-- HOURLY RATE -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <TextBlock Text="Hourly Rate:" Width="160" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding HourlyRate, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="150"
+                                 Height="28"
+                                 Margin="0,0,10,0"/>
+                    </StackPanel>
 
-                <!-- HOURS WORKED -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Hours Worked:" Width="150" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding HoursWorked, UpdateSourceTrigger=PropertyChanged}"
-                             Width="150"
-                             Height="28"
-                             Margin="0,0,10,0"/>
-                </StackPanel>
+                    <!-- HOURS WORKED -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <TextBlock Text="Hours Worked:" Width="160" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding HoursWorked, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="150"
+                                 Height="28"
+                                 Margin="0,0,10,0"/>
+                    </StackPanel>
 
-                <!-- TOTAL PAY -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Total Pay:" Width="150" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding TotalPay}"
-                             Width="150"
-                             Height="28"
-                             IsReadOnly="True"
-                             Background="#F0F0F0"
-                             Margin="0,0,10,0"/>
-                </StackPanel>
+                    <!-- TOTAL PAY -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <TextBlock Text="Total Pay:" Width="160" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding TotalPay}"
+                                 Width="150"
+                                 Height="28"
+                                 IsReadOnly="True"
+                                 Background="#F0F0F0"
+                                 Margin="0,0,10,0"/>
+                    </StackPanel>
 
-                <!-- PAY DATE -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Pay Date:" Width="150" VerticalAlignment="Center"/>
-                    <DatePicker SelectedDate="{Binding PayDate}" Width="200" Height="28"/>
-                </StackPanel>
+                    <!-- PAY DATE -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <TextBlock Text="Pay Date:" Width="160" VerticalAlignment="Center"/>
+                        <DatePicker SelectedDate="{Binding PayDate}" Width="200" Height="28"/>
+                    </StackPanel>
 
-                <!-- NOTES -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Notes:" Width="150" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
-                             Width="300"
-                             Height="60"
-                             AcceptsReturn="True"
-                             TextWrapping="Wrap"/>
-                </StackPanel>
+                    <!-- NOTES -->
+                    <StackPanel Orientation="Horizontal" Margin="0,8">
+                        <TextBlock Text="Notes:" Width="160" VerticalAlignment="Top"/>
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="350"
+                                 Height="60"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"/>
+                    </StackPanel>
 
-                <!-- BUTTONS -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                    <Button Content="Add"
-                            Width="100" Height="32"
-                            Background="#4CAF50"
-                            Foreground="White"
-                            Command="{Binding AddCommand}"
-                            Margin="6,0"/>
-                    <Button Content="Update"
-                            Width="100" Height="32"
-                            Background="#2196F3"
-                            Foreground="White"
-                            Command="{Binding UpdateCommand}"
-                            Margin="6,0"/>
-                    <Button Content="Delete"
-                            Width="100" Height="32"
-                            Background="#F44336"
-                            Foreground="White"
-                            Command="{Binding DeleteCommand}"
-                            Margin="6,0"/>
-                    <Button Content="Clear"
-                            Width="100" Height="32"
-                            Background="#9E9E9E"
-                            Foreground="White"
-                            Command="{Binding ClearCommand}"
-                            Margin="6,0"/>
+                    <!-- BUTTONS -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                        <Button Content="Add"
+                                Width="100" Height="32"
+                                Background="#4CAF50"
+                                Foreground="White"
+                                Command="{Binding AddCommand}"
+                                Margin="6,0"/>
+                        <Button Content="Update"
+                                Width="100" Height="32"
+                                Background="#2196F3"
+                                Foreground="White"
+                                Command="{Binding UpdateCommand}"
+                                Margin="6,0"/>
+                        <Button Content="Delete"
+                                Width="100" Height="32"
+                                Background="#F44336"
+                                Foreground="White"
+                                Command="{Binding DeleteCommand}"
+                                Margin="6,0"/>
+                        <Button Content="Clear"
+                                Width="100" Height="32"
+                                Background="#9E9E9E"
+                                Foreground="White"
+                                Command="{Binding ClearCommand}"
+                                Margin="6,0"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <!-- DATAGRID -->
-        <DataGrid x:Name="SalaryDataGrid"
-                  Grid.Row="2"
-                  ItemsSource="{Binding Salaries}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  SelectedItem="{Binding SelectedSalary, Mode=TwoWay}"
-                  Margin="0,10,0,10"
-                  BorderBrush="#DDD"
-                  BorderThickness="1"
-                  RowHeaderWidth="0"
-                  AlternationCount="2">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Employee" Binding="{Binding Employee.Name}" Width="*" />
-                <DataGridTextColumn Header="Hourly Rate (£)" Binding="{Binding HourlyRate, StringFormat={}{0:F2}}" Width="120" />
-                <DataGridTextColumn Header="Hours Worked" Binding="{Binding HoursWorked}" Width="120" />
-                <DataGridTextColumn Header="Total Pay (£)" Binding="{Binding TotalPay, StringFormat={}{0:F2}}" Width="120" />
-                <DataGridTextColumn Header="Pay Date" Binding="{Binding PayDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Width="160" />
-                <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="2*" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <Border Grid.Row="2" Background="White" CornerRadius="8"
+                BorderBrush="#DDD" BorderThickness="1" Margin="0,0,0,10">
+            <DataGrid x:Name="SalaryDataGrid"
+                      ItemsSource="{Binding Salaries}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      SelectedItem="{Binding SelectedSalary, Mode=TwoWay}"
+                      Margin="10"
+                      AlternatingRowBackground="#FAFAFA"
+                      GridLinesVisibility="Horizontal"
+                      RowHeaderWidth="0"
+                      RowHeight="30">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Employee" Binding="{Binding Employee.Name}" Width="*" />
+                    <DataGridTextColumn Header="Hourly Rate (£)" Binding="{Binding HourlyRate, StringFormat={}{0:F2}}" Width="120" />
+                    <DataGridTextColumn Header="Hours Worked" Binding="{Binding HoursWorked}" Width="120" />
+                    <DataGridTextColumn Header="Total Pay (£)" Binding="{Binding TotalPay, StringFormat={}{0:F2}}" Width="120" />
+                    <DataGridTextColumn Header="Pay Date" Binding="{Binding PayDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Width="160" />
+                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="2*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
         <!-- FOOTER BUTTONS -->
         <StackPanel Grid.Row="3"
@@ -162,6 +167,5 @@
                     Click="Exit_Click"
                     Margin="6,0"/>
         </StackPanel>
-
     </Grid>
 </Window>

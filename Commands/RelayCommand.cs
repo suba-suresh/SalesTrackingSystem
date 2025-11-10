@@ -25,3 +25,6 @@ namespace SalesTrackingSystem.Commands
         }
     }
 }
+
+//A RelayCommand is a custom reusable class that implements ICommand interface.
+//It lets  write logic like “what happens when a button is clicked” directly in your ViewModel, not in the View.

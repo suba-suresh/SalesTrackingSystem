@@ -4,62 +4,110 @@
         Title="SaiHarini Foods"
         Icon="/Images/logo.ico"
         WindowStartupLocation="CenterScreen"
-        Height="500" Width="900"
-        Background="#F5F5F5">
+        MinHeight="420" MinWidth="640"
+        Background="#F5F5F5"
+        ResizeMode="CanResize">
+    <Window.Resources>
+        <!-- Reusable button style for consistent sizing/spacing -->
+        <Style x:Key="AppButton" TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="MinHeight" Value="44"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Individual color styles derived from AppButton -->
+        <Style x:Key="SalesButton" TargetType="Button" BasedOn="{StaticResource AppButton}">
+            <Setter Property="Background" Value="#4CAF50"/>
+        </Style>
+        <Style x:Key="SalaryButton" TargetType="Button" BasedOn="{StaticResource AppButton}">
+            <Setter Property="Background" Value="#2196F3"/>
+        </Style>
+        <Style x:Key="ExpensesButton" TargetType="Button" BasedOn="{StaticResource AppButton}">
+            <Setter Property="Background" Value="#FF9800"/>
+        </Style>
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource AppButton}">
+            <Setter Property="Background" Value="#607D8B"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="MinWidth" Value="140"/>
+        </Style>
+        <Style x:Key="PurpleButton" TargetType="Button" BasedOn="{StaticResource AppButton}">
+            <Setter Property="Background" Value="#9C27B0"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="MinWidth" Value="140"/>
+        </Style>
+    </Window.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="8*"/>
-            <ColumnDefinition Width="6*"/>
-            <ColumnDefinition Width="211*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Header -->
             <RowDefinition Height="*"/>
-            <!-- Main Buttons -->
+            <!-- Content (responsive) -->
             <RowDefinition Height="Auto"/>
-            <!-- Print Button -->
+            <!-- Optional footer / spacing -->
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Background="#2B5797" Padding="20" Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,409" Grid.RowSpan="2">
+        <Border Grid.Row="0" Background="#2B5797" Padding="18" CornerRadius="0">
             <TextBlock Text="SaiHarini Foods"
                        FontSize="26"
                        FontWeight="Bold"
                        Foreground="White"
-                       HorizontalAlignment="Center"/>
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
         </Border>
 
-        <!-- Center Buttons -->
-        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="2" Margin="139,0,0,0">
+        <!-- Content: centered, responsive container -->
+        <Grid Grid.Row="1" Margin="20">
+            <!-- Use a centered column layout with max width so content doesn't stretch odd on very large screens -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Row 1 -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                <Button Content="Sales" Width="150" Height="50" Margin="10"
-                        FontSize="16" Background="#4CAF50" Foreground="White"
-                        Click="OpenSales_Click"/>
-                <Button Content="Salary" Width="150" Height="50" Margin="10"
-                        FontSize="16" Background="#2196F3" Foreground="White"
-                        Click="OpenSalary_Click"/>
-                <Button Content="Expenses" Width="150" Height="50" Margin="10"
-                        FontSize="16" Background="#FF9800" Foreground="White"
-                        Click="OpenExpenses_Click"/>
+            <!-- The actual content is in the center column -->
+            <StackPanel Grid.Column="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        MaxWidth="900">
+
+                <!-- Large button group: uses WrapPanel so buttons wrap on smaller widths -->
+                <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10" ItemHeight="56">
+                    <Button Content="Sales" Style="{StaticResource SalesButton}" Click="OpenSales_Click"/>
+                    <Button Content="Salary" Style="{StaticResource SalaryButton}" Click="OpenSalary_Click"/>
+                    <Button Content="Expenses" Style="{StaticResource ExpensesButton}" Click="OpenExpenses_Click"/>
+                </WrapPanel>
+
+                <!-- Secondary buttons row (wraps if needed) -->
+                <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0" ItemHeight="50">
+                    <Button Content="Weekly Sales" Style="{StaticResource SecondaryButton}" Click="OpenWeeklySales_Click"/>
+                    <Button Content="Monthly Sales" Style="{StaticResource PurpleButton}" Click="OpenMonthlySales_Click"/>
+                </WrapPanel>
+
             </StackPanel>
+        </Grid>
 
-            <!-- Row 2 -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,10">
-                <Button Content="Weekly Sales" Width="170" Height="45" Margin="10"
-                        FontSize="15" Background="#607D8B" Foreground="White"
-                        Click="OpenWeeklySales_Click"/>
-                <Button Content="Monthly Sales" Width="170" Height="45" Margin="10"
-                        FontSize="15" Background="#9C27B0" Foreground="White"
-                        Click="OpenMonthlySales_Click"/>
-            </StackPanel>
-
-        </StackPanel>
-
-
-
+        <!-- Footer/Spacing row (keeps header/content separation consistent) -->
+        <Border Grid.Row="2" Height="12" Background="Transparent"/>
     </Grid>
 </Window>
