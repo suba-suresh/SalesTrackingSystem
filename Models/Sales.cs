@@ -1,4 +1,4 @@
-﻿// File: Models/SaleRecord.cs
+﻿
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +13,7 @@ namespace SalesTrackingSystem.Models
 
         public DateTime Date { get; set; } = DateTime.Today;
 
-        // Orders - ALL CHANGED TO DECIMAL to match database DECIMAL(18,2)
+       
         [Column("Inhouse")]
         public decimal OrdersInHouse { get; set; }
 

@@ -87,9 +87,8 @@ namespace SalesTrackingSystem.ViewModels
             PrintCommand = new RelayCommand(_ => PrintSalaryReport());
         }
 
-        // ===============================
         // LOAD / REFRESH
-        // ===============================
+       
         private void LoadAllSalaries()
         {
             Salaries.Clear();
@@ -102,9 +101,8 @@ namespace SalesTrackingSystem.ViewModels
                 Salaries.Add(s);
         }
 
-        // ===============================
         // ADD
-        // ===============================
+    
         private void AddSalary()
         {
             if (string.IsNullOrWhiteSpace(EmployeeName))
@@ -156,9 +154,9 @@ namespace SalesTrackingSystem.ViewModels
             ClearForm();
         }
 
-        // ===============================
+       
         // UPDATE
-        // ===============================
+       
         private void UpdateSalary()
         {
             if (SelectedSalary == null)
@@ -180,9 +178,9 @@ namespace SalesTrackingSystem.ViewModels
             LoadAllSalaries();
         }
 
-        // ===============================
+        
         // DELETE
-        // ===============================
+        
         private void DeleteSalary()
         {
             if (SelectedSalary == null) return;
@@ -198,9 +196,9 @@ namespace SalesTrackingSystem.ViewModels
             MessageBox.Show("Salary deleted successfully!", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // ===============================
+     
         // FORM / CALCULATIONS
-        // ===============================
+   
         private void ClearForm()
         {
             EmployeeName = "";
@@ -229,9 +227,9 @@ namespace SalesTrackingSystem.ViewModels
             TotalPay = HourlyRate * HoursWorked;
         }
 
-        // ===============================
+        
         // PRINT FUNCTION
-        // ===============================
+        
         private void PrintSalaryReport()
         {
             if (Salaries == null || !Salaries.Any())

@@ -112,7 +112,7 @@ namespace SalesTrackingSystem.ViewModels
         private void PrintGrid()
         {
             MessageBox.Show("Printing current grid data...", "Print", MessageBoxButton.OK, MessageBoxImage.Information);
-            // Actual printing handled in View (ViewSalesWindow.Print_Click)
+            
         }
     }
 }
