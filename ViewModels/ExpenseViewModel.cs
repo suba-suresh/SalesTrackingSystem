@@ -31,7 +31,12 @@ namespace SalesTrackingSystem.ViewModels
         public Expense SelectedExpense
         {
             get => _selectedExpense;
-            set { _selectedExpense = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedExpense = value;
+                OnPropertyChanged();
+                LoadSelectedExpense();
+            }
         }
 
         // Totals
@@ -52,6 +57,7 @@ namespace SalesTrackingSystem.ViewModels
             NewExpense = new Expense { Date = DateTime.Today, PaymentType = "Cash" };
 
             AddExpenseCommand = new RelayCommand(_ => AddExpense(), _ => CanAddExpense());
+            UpdateExpenseCommand = new RelayCommand(_ => UpdateExpense(), _ => SelectedExpense != null); // ✅ Added
             DeleteExpenseCommand = new RelayCommand(_ => DeleteExpense(), _ => SelectedExpense != null);
             ClearCommand = new RelayCommand(_ => ClearForm());
         }
@@ -82,6 +88,18 @@ namespace SalesTrackingSystem.ViewModels
         {
             try
             {
+                // ✅ Prevent duplicates by date+category
+                var exists = _context.Expenses.Any(e =>
+                    e.Date == NewExpense.Date &&
+                    e.Category.ToLower() == NewExpense.Category.ToLower());
+
+                if (exists)
+                {
+                    MessageBox.Show("Expense already exists for this category and date. Please use Update instead.",
+                        "Duplicate Entry", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 var expense = new Expense
                 {
                     Date = NewExpense.Date,
@@ -96,12 +114,69 @@ namespace SalesTrackingSystem.ViewModels
                 Expenses.Insert(0, expense);
                 RefreshTotals();
 
-                MessageBox.Show("Expense added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Expense added successfully for {NewExpense.Date:dd-MM-yyyy}",
+                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 ClearForm();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error adding expense: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        public ICommand UpdateExpenseCommand { get; }
+
+        // ✅ Add Update method
+        private void UpdateExpense()
+        {
+            if (SelectedExpense == null)
+            {
+                MessageBox.Show("Please select an expense to update.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (!CanAddExpense())
+            {
+                MessageBox.Show("Please fill in all fields correctly.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                SelectedExpense.Date = NewExpense.Date;
+                SelectedExpense.Category = NewExpense.Category.Trim();
+                SelectedExpense.PaymentType = NewExpense.PaymentType;
+                SelectedExpense.Amount = NewExpense.Amount;
+
+                _context.Entry(SelectedExpense).State = System.Data.Entity.EntityState.Modified;
+                _context.SaveChanges();
+
+                // Refresh the list
+                LoadExpenses();
+                RefreshTotals();
+
+                MessageBox.Show("Expense updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                ClearForm();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating expense: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // ✅ Fix: Load selected expense into form for editing
+        private void LoadSelectedExpense()
+        {
+            if (SelectedExpense != null)
+            {
+                NewExpense = new Expense
+                {
+                    Date = SelectedExpense.Date,
+                    Category = SelectedExpense.Category,
+                    PaymentType = SelectedExpense.PaymentType,
+                    Amount = SelectedExpense.Amount
+                };
             }
         }
 

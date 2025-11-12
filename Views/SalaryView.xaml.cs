@@ -15,5 +15,7 @@ namespace SalesTrackingSystem.Views
         {
             this.Close();
         }
+
+      
     }
 }

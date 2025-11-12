@@ -46,6 +46,11 @@ namespace SalesTrackingSystem.Views
             window.ShowDialog();
         }
 
-       
+        private void OpenWeekendSales_Click(object sender, RoutedEventArgs e)
+        {
+            
+            var window = new WeekendSalesView(_sales);
+            window.ShowDialog();
+        }
     }
 }

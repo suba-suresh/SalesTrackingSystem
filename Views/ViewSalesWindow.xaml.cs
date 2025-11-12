@@ -187,7 +187,6 @@ namespace SalesTrackingSystem.Views
             // Summary block (totals)
             var summaryPara = new Paragraph();
             summaryPara.Margin = new Thickness(0, 12, 0, 0);
-            summaryPara.Inlines.Add(new Run($"Total Orders: {vm.TotalOrders}") { FontWeight = FontWeights.Bold });
             summaryPara.Inlines.Add(new Run("    "));
             summaryPara.Inlines.Add(new Run($"Total Revenue: {vm.TotalRevenue.ToString("C2", CultureInfo.GetCultureInfo("en-GB"))}") { FontWeight = FontWeights.Bold });
             fd.Blocks.Add(summaryPara);

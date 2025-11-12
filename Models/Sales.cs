@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -37,7 +36,7 @@ namespace SalesTrackingSystem.Models
 
         // Computed read-only properties used in UI
         [NotMapped]
-        public decimal TotalOrders => OrdersJustEat + OrdersUber + OrdersDeliveroo + OrdersInHouse;
+        public int TotalOrders => (int)OrdersJustEat + (int)OrdersUber + (int)OrdersDeliveroo + (int)OrdersInHouse;
 
         [NotMapped]
         public decimal TotalAmount => AmountJustEat + AmountUber + AmountDeliveroo + AmountInhouse;

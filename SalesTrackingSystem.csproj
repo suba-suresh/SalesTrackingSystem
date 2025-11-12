@@ -37,6 +37,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommunityToolkit.Mvvm, Version=8.4.0.0, Culture=neutral, PublicKeyToken=4aff67a105548ee2, processorArchitecture=MSIL">
       <HintPath>packages\CommunityToolkit.Mvvm.8.4.0\lib\netstandard2.0\CommunityToolkit.Mvvm.dll</HintPath>
@@ -89,6 +96,7 @@
     </ApplicationDefinition>
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Data\AppDbContext.cs" />
+    <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\Salary.cs" />
@@ -98,6 +106,7 @@
     <Compile Include="ViewModels\SalaryViewModel.cs" />
     <Compile Include="ViewModels\SalesViewModel.cs" />
     <Compile Include="ViewModels\ViewSalesViewModel.cs" />
+    <Compile Include="ViewModels\WeekendSalesViewModel.cs" />
     <Compile Include="ViewModels\WeeklySalesViewModel.cs" />
     <Compile Include="Views\ExpenseView.xaml.cs">
       <DependentUpon>ExpenseView.xaml</DependentUpon>
@@ -113,6 +122,9 @@
     </Compile>
     <Compile Include="Views\ViewSalesWindow.xaml.cs">
       <DependentUpon>ViewSalesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WeekendSalesView.xaml.cs">
+      <DependentUpon>WeekendSalesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WeeklySalesWindow.xaml.cs">
       <DependentUpon>WeeklySalesWindow.xaml</DependentUpon>
@@ -146,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ViewSalesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WeekendSalesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -185,6 +201,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="logo.ico" />
     <Content Include="ViewModels\SalesTrackingSystem.exe" />
   </ItemGroup>
   <ItemGroup>

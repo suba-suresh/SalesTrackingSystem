@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Data.Entity; // for Include and DbFunctions
+using System.Data.Entity;
 
 namespace SalesTrackingSystem.ViewModels
 {
@@ -23,18 +23,20 @@ namespace SalesTrackingSystem.ViewModels
             set { _selectedDate = value; OnPropertyChanged(); }
         }
 
-        private int _totalOrders;
-        public int TotalOrders
-        {
-            get => _totalOrders;
-            set { _totalOrders = value; OnPropertyChanged(); }
-        }
+     
 
         private decimal _totalRevenue;
         public decimal TotalRevenue
         {
             get => _totalRevenue;
             set { _totalRevenue = value; OnPropertyChanged(); }
+        }
+
+        private decimal _averageDailySales;
+        public decimal AverageDailySales
+        {
+            get => _averageDailySales;
+            set { _averageDailySales = value; OnPropertyChanged(); }
         }
 
         // Commands
@@ -47,56 +49,81 @@ namespace SalesTrackingSystem.ViewModels
         public ViewSalesViewModel()
         {
             _context = new AppDbContext();
+
             DailyViewCommand = new RelayCommand(o => LoadDailyData());
             MonthlyViewCommand = new RelayCommand(o => LoadMonthlyData());
             YearlyViewCommand = new RelayCommand(o => LoadYearlyData());
-            RefreshCommand = new RelayCommand(o => LoadCurrentView());
+            RefreshCommand = new RelayCommand(o => RefreshToToday());
             PrintCommand = new RelayCommand(o => PrintGrid());
 
-            // default
-            LoadDailyData();
+            LoadDailyData(); // Default on startup
         }
 
-        private void LoadCurrentView()
+        private void RefreshToToday()
         {
-            // Re-run the current view (default daily)
+            SelectedDate = DateTime.Today;
+            OnPropertyChanged(nameof(SelectedDate));
             LoadDailyData();
+            MessageBox.Show($"Refreshed to current date: {SelectedDate:dd-MM-yyyy}",
+                "Refreshed", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LoadDailyData()
         {
-            // Use DbFunctions.TruncateTime for date compare in EF6
-            var records = _context.Sales
-                .Where(s => DbFunctions.TruncateTime(s.Date) == DbFunctions.TruncateTime(SelectedDate))
-                .OrderByDescending(s => s.Date)
-                .ToList();
+            try
+            {
+                var targetDate = SelectedDate.Date;
+                var records = _context.Sales
+                    .Where(s => DbFunctions.TruncateTime(s.Date) == targetDate)
+                    .OrderByDescending(s => s.Date)
+                    .ToList();
 
-            ApplyLoadedRecords(records);
+                ApplyLoadedRecords(records);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading daily data: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void LoadMonthlyData()
         {
-            var y = SelectedDate.Year;
-            var m = SelectedDate.Month;
+            try
+            {
+                int year = SelectedDate.Year;
+                int month = SelectedDate.Month;
+                var records = _context.Sales
+                    .Where(s => s.Date.Year == year && s.Date.Month == month)
+                    .OrderByDescending(s => s.Date)
+                    .ToList();
 
-            var records = _context.Sales
-                .Where(s => s.Date.Year == y && s.Date.Month == m)
-                .OrderByDescending(s => s.Date)
-                .ToList();
-
-            ApplyLoadedRecords(records);
+                ApplyLoadedRecords(records);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading monthly data: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void LoadYearlyData()
         {
-            var y = SelectedDate.Year;
+            try
+            {
+                int year = SelectedDate.Year;
+                var records = _context.Sales
+                    .Where(s => s.Date.Year == year)
+                    .OrderByDescending(s => s.Date)
+                    .ToList();
 
-            var records = _context.Sales
-                .Where(s => s.Date.Year == y)
-                .OrderByDescending(s => s.Date)
-                .ToList();
-
-            ApplyLoadedRecords(records);
+                ApplyLoadedRecords(records);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading yearly data: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ApplyLoadedRecords(System.Collections.Generic.List<SaleRecord> records)
@@ -105,14 +132,25 @@ namespace SalesTrackingSystem.ViewModels
             foreach (var rec in records)
                 FilteredSales.Add(rec);
 
-            TotalOrders = records.Sum(r => (int)(r.OrdersJustEat + r.OrdersUber + r.OrdersDeliveroo + r.OrdersInHouse));
-            TotalRevenue = records.Sum(r => (r.AmountJustEat + r.AmountUber + r.AmountDeliveroo + r.AmountInhouse));
+           
+
+            TotalRevenue = records.Any()
+                ? records.Sum(r => (r.AmountJustEat + r.AmountUber + r.AmountDeliveroo + r.AmountInhouse))
+                : 0;
+
+            AverageDailySales = records.Any()
+                ? records.Average(r => (r.AmountJustEat + r.AmountUber + r.AmountDeliveroo + r.AmountInhouse))
+                : 0;
+
+            OnPropertyChanged(nameof(FilteredSales));
+            OnPropertyChanged(nameof(TotalRevenue));
+            OnPropertyChanged(nameof(AverageDailySales));
         }
 
         private void PrintGrid()
         {
-            MessageBox.Show("Printing current grid data...", "Print", MessageBoxButton.OK, MessageBoxImage.Information);
-            
+            MessageBox.Show("Printing current grid data...",
+                "Print Report", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

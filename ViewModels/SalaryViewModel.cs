@@ -23,8 +23,20 @@ namespace SalesTrackingSystem.ViewModels
         public Salary SelectedSalary
         {
             get => _selectedSalary;
-            set { _selectedSalary = value; OnPropertyChanged(); LoadSelectedSalary(); }
+            set
+            {
+                _selectedSalary = value;
+                OnPropertyChanged();
+
+                // ✅ Populate the left form when selecting a grid row
+                LoadSelectedSalary();
+
+                // ✅ Enable/disable buttons dynamically
+                (UpdateCommand as RelayCommand)?.RaiseCanExecuteChanged();
+                (DeleteCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
         }
+
 
         private string _employeeName;
         public string EmployeeName
@@ -150,7 +162,7 @@ namespace SalesTrackingSystem.ViewModels
             newSalary.Employee = employee;
             Salaries.Insert(0, newSalary);
 
-            MessageBox.Show("Salary added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Salary added successfully for {PayDate:dd-MM-yyyy}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             ClearForm();
         }
 
@@ -174,7 +186,7 @@ namespace SalesTrackingSystem.ViewModels
             _context.Entry(SelectedSalary).State = System.Data.Entity.EntityState.Modified;
             _context.SaveChanges();
 
-            MessageBox.Show("Salary updated successfully!", "Updated", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Salary updated successfully for {PayDate:dd-MM-yyyy}", "Updated", MessageBoxButton.OK, MessageBoxImage.Information);
             LoadAllSalaries();
         }
 
@@ -188,17 +200,20 @@ namespace SalesTrackingSystem.ViewModels
             var confirm = MessageBox.Show("Are you sure you want to delete this record?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
+            var dateToShow = SelectedSalary.PayDate; // ✅ Store before deletion
+
             _context.Salaries.Remove(SelectedSalary);
             _context.SaveChanges();
             Salaries.Remove(SelectedSalary);
             ClearForm();
 
-            MessageBox.Show("Salary deleted successfully!", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+            // ✅ Fixed message
+            MessageBox.Show($"Salary deleted successfully for {dateToShow:dd-MM-yyyy}", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-     
+
         // FORM / CALCULATIONS
-   
+
         private void ClearForm()
         {
             EmployeeName = "";

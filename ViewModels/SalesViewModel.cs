@@ -5,7 +5,9 @@ using SalesTrackingSystem.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -30,7 +32,14 @@ namespace SalesTrackingSystem.ViewModels
             }
         }
 
-       
+        // ===== NEW: Loading Indicator =====
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set { SetProperty(ref _isLoading, value); }
+        }
+
         private DateTime _dateInput = DateTime.Today;
         public DateTime DateInput
         {
@@ -38,6 +47,7 @@ namespace SalesTrackingSystem.ViewModels
             set { _dateInput = value; OnPropertyChanged(); UpdateButtonStates(); }
         }
 
+        // ===== Order Inputs (Hidden in UI, but kept for DB compatibility) =====
         private decimal _ordersJustEatInput;
         public decimal OrdersJustEatInput
         {
@@ -66,6 +76,7 @@ namespace SalesTrackingSystem.ViewModels
             set { _ordersInHouseInput = value; OnPropertyChanged(); UpdateButtonStates(); }
         }
 
+        // ===== Amount Inputs (Visible in UI) =====
         private decimal _amountJustEatInput;
         public decimal AmountJustEatInput
         {
@@ -94,13 +105,7 @@ namespace SalesTrackingSystem.ViewModels
             set { _amountInHouseInput = value; OnPropertyChanged(); UpdateButtonStates(); }
         }
 
-        
-        private DateTime? _filterDate;
-        public DateTime? FilterDate
-        {
-            get => _filterDate;
-            set { _filterDate = value; OnPropertyChanged(); FilterSalesByDate(); }
-        }
+      
 
         // Commands
         public ICommand SaveCommand { get; }
@@ -109,8 +114,9 @@ namespace SalesTrackingSystem.ViewModels
         public ICommand ClearCommand { get; }
         public ICommand EditRowCommand { get; }
         public ICommand ViewSalesCommand { get; }
+        public ICommand BackCommand { get; } // NEW: Back navigation
 
-        // Button state properties (bind to IsEnabled in XAML)
+        // Button state properties
         private bool _canSave = true;
         public bool CanSave
         {
@@ -132,7 +138,6 @@ namespace SalesTrackingSystem.ViewModels
             set { _canDelete = value; OnPropertyChanged(); }
         }
 
-       
         private List<SaleRecord> _allSales = new List<SaleRecord>();
 
         public SalesViewModel()
@@ -153,61 +158,77 @@ namespace SalesTrackingSystem.ViewModels
                 win.ShowDialog();
             });
 
-            // Load data
-            LoadAllSalesFromDb();
+            // NEW: Back Command - Navigate to HomeWindow
+            BackCommand = new RelayCommand(o => NavigateBack());
+
+            // Load data ASYNCHRONOUSLY (CR2: Performance improvement)
+            LoadAllSalesFromDbAsync();
             UpdateButtonStates();
         }
 
-        private void LoadAllSalesFromDb()
+      
+        private async void LoadAllSalesFromDbAsync()
         {
-            _allSales = _context.Sales
-                               .OrderByDescending(s => s.Date)
-                               .ToList();
+            IsLoading = true;
+            var stopwatch = Stopwatch.StartNew();
 
-            Sales = new ObservableCollection<SaleRecord>(_allSales);
-            OnPropertyChanged(nameof(Sales));
+            try
+            {
+                // Perform database query on background thread
+                await Task.Run(() =>
+                {
+                    _allSales = _context.Sales
+                                       .OrderByDescending(s => s.Date)
+                                       .Take(1000) // Limit to last 1000 records for performance
+                                       .ToList();
+                });
+
+                stopwatch.Stop();
+                Debug.WriteLine($"[PERFORMANCE] Sales data loaded in {stopwatch.ElapsedMilliseconds}ms ({_allSales.Count} records)");
+
+                // Update UI on UI thread
+                Sales = new ObservableCollection<SaleRecord>(_allSales);
+                OnPropertyChanged(nameof(Sales));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading sales: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
-        private void FilterSalesByDate()
-        {
-            if (Sales == null) return;
-            Sales.Clear();
-            IEnumerable<SaleRecord> filtered = _allSales;
-
-            if (FilterDate.HasValue)
-                filtered = _allSales.Where(s => s.Date.Date == FilterDate.Value.Date);
-
-            foreach (var r in filtered.OrderByDescending(s => s.Date))
-                Sales.Add(r);
-        }
-
+      
         private bool InputsHaveValues()
         {
-            return (OrdersJustEatInput + OrdersUberInput + OrdersDeliverooInput + OrdersInHouseInput) > 0
-                || (AmountJustEatInput + AmountUberInput + AmountDeliverooInput + AmountInHouseInput) > 0;
+            // Only check amounts since orders are hidden from UI
+            return (AmountJustEatInput + AmountUberInput + AmountDeliverooInput + AmountInHouseInput) > 0;
         }
 
-        // Create
+       
         private void SaveRecord()
         {
             if (!InputsHaveValues())
             {
-                MessageBox.Show("Please enter some orders or amounts before saving.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please enter amounts before saving.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             var newSale = new SaleRecord
             {
                 Date = DateInput.Date,
-                OrdersJustEat = OrdersJustEatInput,
-                OrdersUber = OrdersUberInput,
-                OrdersDeliveroo = OrdersDeliverooInput,
-                OrdersInHouse = OrdersInHouseInput,
+                // Orders kept at 0 since they're hidden from UI (CR4)
+                OrdersJustEat = 0,
+                OrdersUber = 0,
+                OrdersDeliveroo = 0,
+                OrdersInHouse = 0,
+                // Amounts from user input
                 AmountJustEat = AmountJustEatInput,
                 AmountUber = AmountUberInput,
                 AmountDeliveroo = AmountDeliverooInput,
                 AmountInhouse = AmountInHouseInput
-                // DO NOT assign TotalOrders/TotalAmount here if those are read-only computed properties
             };
 
             try
@@ -217,10 +238,9 @@ namespace SalesTrackingSystem.ViewModels
 
                 // update local collections
                 _allSales.Insert(0, newSale);
-                if (!FilterDate.HasValue || newSale.Date.Date == FilterDate.Value.Date)
-                    Sales.Insert(0, newSale);
+                Sales.Insert(0, newSale);
 
-                MessageBox.Show("Sale saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Sale saved successfully for {DateInput.Date:dd-MM-yyyy}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 ClearForm();
             }
             catch (Exception ex)
@@ -229,7 +249,7 @@ namespace SalesTrackingSystem.ViewModels
             }
         }
 
-        // Update
+
         private void UpdateRecord()
         {
             if (SelectedSale == null)
@@ -240,49 +260,61 @@ namespace SalesTrackingSystem.ViewModels
 
             try
             {
-                // copy inputs into SelectedSale
+                var updatedDate = DateInput.Date;
+                var saleId = SelectedSale.Id;
+
+                // Update sale
                 SelectedSale.Date = DateInput.Date;
-                SelectedSale.OrdersJustEat = OrdersJustEatInput;
-                SelectedSale.OrdersUber = OrdersUberInput;
-                SelectedSale.OrdersDeliveroo = OrdersDeliverooInput;
-                SelectedSale.OrdersInHouse = OrdersInHouseInput;
+                SelectedSale.OrdersJustEat = 0;
+                SelectedSale.OrdersUber = 0;
+                SelectedSale.OrdersDeliveroo = 0;
+                SelectedSale.OrdersInHouse = 0;
                 SelectedSale.AmountJustEat = AmountJustEatInput;
                 SelectedSale.AmountUber = AmountUberInput;
                 SelectedSale.AmountDeliveroo = AmountDeliverooInput;
                 SelectedSale.AmountInhouse = AmountInHouseInput;
 
-                // DO NOT set read-only computed properties (TotalOrders/TotalAmount)
                 _context.Entry(SelectedSale).State = System.Data.Entity.EntityState.Modified;
                 _context.SaveChanges();
 
-                // refresh local lists
-                var idx = _allSales.FindIndex(s => s.Id == SelectedSale.Id);
-                if (idx >= 0) _allSales[idx] = SelectedSale;
+                // ✅ Re-query to refresh left and right side
+                LoadAllSales();
+                SelectedSale = _context.Sales.FirstOrDefault(s => s.Id == saleId);
+                OnPropertyChanged(nameof(SelectedSale));
 
-                FilterSalesByDate();
+                MessageBox.Show($"Record updated successfully for {updatedDate:dd-MM-yyyy}",
+                    "Updated", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                MessageBox.Show("Record updated successfully!", "Updated", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                
                 ClearForm();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Update failed: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Update failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Delete 
+
         private void DeleteRecord(object parameter)
         {
             SaleRecord toDelete = null;
 
-            if (parameter is SaleRecord row) toDelete = row;
-            else if (SelectedSale != null) toDelete = SelectedSale;
+            if (parameter is SaleRecord row)
+                toDelete = row;
+            else if (SelectedSale != null)
+                toDelete = SelectedSale;
 
             if (toDelete == null) return;
 
-            var confirm = MessageBox.Show("Are you sure you want to delete this record?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            // ✅ Store values BEFORE deletion
+            var deletedDate = toDelete.Date;
+            var deletedId = toDelete.Id;
+
+            var confirm = MessageBox.Show(
+                $"Are you sure you want to delete this record?\n\nDate: {deletedDate:dd-MM-yyyy}\nTotal: £{toDelete.TotalAmount:F2}",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
             if (confirm != MessageBoxResult.Yes) return;
 
             try
@@ -290,23 +322,27 @@ namespace SalesTrackingSystem.ViewModels
                 _context.Sales.Remove(toDelete);
                 _context.SaveChanges();
 
-                _allSales.RemoveAll(s => s.Id == toDelete.Id);
-                var existing = Sales.FirstOrDefault(s => s.Id == toDelete.Id);
-                if (existing != null) Sales.Remove(existing);
+                // Remove from local collections
+                _allSales.RemoveAll(s => s.Id == deletedId);
+                var existing = Sales.FirstOrDefault(s => s.Id == deletedId);
+                if (existing != null)
+                    Sales.Remove(existing);
 
-                MessageBox.Show("Record deleted successfully!", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
+                // ✅ Show success message
+                MessageBox.Show($"Record deleted successfully for {deletedDate:dd-MM-yyyy}", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // clear selection/form if that record was selected
-                if (SelectedSale != null && SelectedSale.Id == toDelete.Id)
-                    ClearForm();
+                // ✅ ALWAYS clear form after deletion regardless of which record was deleted
+                ClearForm();
+
+                // ✅ Ensure SelectedSale is null
+                SelectedSale = null;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Delete failed: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Delete failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // Called when user clicks Edit row - sets the form inputs to that row
         private void EditRow(object parameter)
         {
             if (parameter is SaleRecord row)
@@ -320,20 +356,18 @@ namespace SalesTrackingSystem.ViewModels
             if (SelectedSale == null) return;
 
             DateInput = SelectedSale.Date;
-            OrdersJustEatInput = SelectedSale.OrdersJustEat;
-            OrdersUberInput = SelectedSale.OrdersUber;
-            OrdersDeliverooInput = SelectedSale.OrdersDeliveroo;
-            OrdersInHouseInput = SelectedSale.OrdersInHouse;
+            // Orders hidden from UI, so we don't load them
+            OrdersJustEatInput = 0;
+            OrdersUberInput = 0;
+            OrdersDeliverooInput = 0;
+            OrdersInHouseInput = 0;
+            // Load amounts
             AmountJustEatInput = SelectedSale.AmountJustEat;
             AmountUberInput = SelectedSale.AmountUber;
             AmountDeliverooInput = SelectedSale.AmountDeliveroo;
             AmountInHouseInput = SelectedSale.AmountInhouse;
 
             OnPropertyChanged(nameof(DateInput));
-            OnPropertyChanged(nameof(OrdersJustEatInput));
-            OnPropertyChanged(nameof(OrdersUberInput));
-            OnPropertyChanged(nameof(OrdersDeliverooInput));
-            OnPropertyChanged(nameof(OrdersInHouseInput));
             OnPropertyChanged(nameof(AmountJustEatInput));
             OnPropertyChanged(nameof(AmountUberInput));
             OnPropertyChanged(nameof(AmountDeliverooInput));
@@ -354,10 +388,6 @@ namespace SalesTrackingSystem.ViewModels
             SelectedSale = null;
 
             OnPropertyChanged(nameof(DateInput));
-            OnPropertyChanged(nameof(OrdersJustEatInput));
-            OnPropertyChanged(nameof(OrdersUberInput));
-            OnPropertyChanged(nameof(OrdersDeliverooInput));
-            OnPropertyChanged(nameof(OrdersInHouseInput));
             OnPropertyChanged(nameof(AmountJustEatInput));
             OnPropertyChanged(nameof(AmountUberInput));
             OnPropertyChanged(nameof(AmountDeliverooInput));
@@ -380,8 +410,27 @@ namespace SalesTrackingSystem.ViewModels
                 CanUpdate = false;
                 CanDelete = false;
             }
-            // notify commands to re-query if they use command.CanExecute (optional)
             CommandManager.InvalidateRequerySuggested();
+        }
+
+       
+        private void NavigateBack()
+        {
+            var currentWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            if (currentWindow != null)
+            {
+                var homeWindow = new HomeWindow();
+                homeWindow.Show();
+                currentWindow.Close();
+            }
+        }
+
+        // Add this method to fix CS0103: The name 'LoadAllSales' does not exist in the current context
+        private void LoadAllSales()
+        {
+            // Load sales from _allSales into Sales ObservableCollection
+            Sales = new ObservableCollection<SaleRecord>(_allSales);
+            OnPropertyChanged(nameof(Sales));
         }
     }
 }

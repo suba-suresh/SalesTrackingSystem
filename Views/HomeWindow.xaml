@@ -100,8 +100,10 @@
 
                 <!-- Secondary buttons row (wraps if needed) -->
                 <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0" ItemHeight="50">
+                    <Button Content="WeekendSales" Style="{StaticResource SecondaryButton}" Click="OpenWeekendSales_Click"/>
                     <Button Content="Weekly Sales" Style="{StaticResource SecondaryButton}" Click="OpenWeeklySales_Click"/>
                     <Button Content="Monthly Sales" Style="{StaticResource PurpleButton}" Click="OpenMonthlySales_Click"/>
+                    
                 </WrapPanel>
 
             </StackPanel>

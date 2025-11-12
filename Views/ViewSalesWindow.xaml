@@ -3,106 +3,144 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Sales Analytics"
         Icon="/Images/logo.ico"
-        Height="650" Width="1100"
-        MinHeight="600" MinWidth="900"
+        Height="700" Width="1200"
+        MinHeight="650" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
-        Background="#FAFAFA">
+        Background="#F5F5F5">
 
+    <!-- Resource Styles -->
     <Window.Resources>
+        <!-- Reusable button style -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2B5797"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <!-- Removed invalid CornerRadius setter -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <!-- Set CornerRadius directly on Border inside the template -->
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="FilterButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#F5F5F5"/>
+            <Setter Property="Background" Value="#EDEDED"/>
             <Setter Property="Foreground" Value="#333"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="8,2"/>
+            <Setter Property="Padding" Value="8,4"/>
             <Setter Property="Margin" Value="4,0"/>
             <Setter Property="BorderBrush" Value="#CCC"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
-            
         </Style>
     </Window.Resources>
 
-    <Grid Margin="20">
+    <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- Header -->
             <RowDefinition Height="Auto"/>
+            <!-- Filters -->
             <RowDefinition Height="Auto"/>
+            <!-- Summary Cards -->
             <RowDefinition Height="*"/>
+            <!-- DataGrid -->
             <RowDefinition Height="Auto"/>
+            <!-- Footer -->
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <TextBlock Grid.Row="0"
-                   Text="Sales Analytics Dashboard"
-                   FontSize="24"
-                   FontWeight="Bold"
-                   Foreground="#222"
-                   Margin="0,0,0,5"/>
-        <TextBlock Grid.Row="0"
-                   Text="— view daily/monthly/yearly reports"
-                   FontSize="14"
-                   Foreground="Gray"
-                   Margin="280,5,0,0"/>
+        <!-- HEADER -->
+        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
+            <TextBlock Text="Sales Analytics Dashboard"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="#2B5797"/>
+            <TextBlock Text="Analyze your daily, monthly, and yearly performance at a glance"
+                       FontSize="14"
+                       Foreground="Gray"
+                       Margin="2,5,0,0"/>
+        </StackPanel>
 
-        <!-- Controls -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,20,0,15" VerticalAlignment="Center">
-            <TextBlock Text="Select Date:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <DatePicker SelectedDate="{Binding SelectedDate}" Width="150" Margin="0,0,10,0"/>
+        <!-- FILTERS -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,25">
+            <TextBlock Text="Select Date:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+            <DatePicker SelectedDate="{Binding SelectedDate}" Width="160" Margin="0,0,15,0"/>
+
             <Button Content="Daily View" Command="{Binding DailyViewCommand}" Style="{StaticResource FilterButtonStyle}"/>
             <Button Content="Monthly View" Command="{Binding MonthlyViewCommand}" Style="{StaticResource FilterButtonStyle}"/>
             <Button Content="Yearly View" Command="{Binding YearlyViewCommand}" Style="{StaticResource FilterButtonStyle}"/>
             <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource FilterButtonStyle}"/>
-            <Button Content="Print Grid" Click="Print_Click"
-                    Background="#E91E63" Foreground="White" FontWeight="Bold"
-                    Width="120" Height="30" Margin="20,0,0,0"/>
+
+            <Button Content="Print Report" Command="{Binding PrintCommand}"
+                    Background="#E91E63" Foreground="White"
+                    FontWeight="Bold" Width="130" Height="32" Margin="25,0,0,0" Cursor="Hand"/>
         </StackPanel>
 
-        <!-- Summary -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
-            <Border Background="White" CornerRadius="10" Padding="20" Margin="10" Width="250" BorderBrush="#DDD" BorderThickness="1">
-                <StackPanel>
-                    <TextBlock Text="Total Orders" FontWeight="Bold" FontSize="14" Foreground="#555"/>
-                    <TextBlock Text="{Binding TotalOrders}" FontSize="22" FontWeight="Bold" Foreground="#333"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" CornerRadius="10" Padding="20" Margin="10" Width="250" BorderBrush="#DDD" BorderThickness="1">
-                <StackPanel>
+        <!-- SUMMARY CARDS -->
+        <Grid Grid.Row="2" Margin="315,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+
+            <!-- Total Revenue -->
+            <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="20" Margin="10" Width="250"
+                    BorderBrush="#DDD" BorderThickness="1">
+                <StackPanel HorizontalAlignment="Center">
                     <TextBlock Text="Total Revenue" FontWeight="Bold" FontSize="14" Foreground="#555"/>
-                    <TextBlock Text="{Binding TotalRevenue, StringFormat=£{0:F2}}" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                    <TextBlock Text="{Binding TotalRevenue, StringFormat=£{0:N2}}" FontSize="26" FontWeight="Bold" Foreground="#2B5797" Margin="0,6,0,0"/>
+                    <TextBlock Text="combined across all channels" FontSize="12" Foreground="Gray"/>
                 </StackPanel>
             </Border>
-        </StackPanel>
 
-        <!-- DataGrid -->
-        <Border Grid.Row="3" Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1">
-            <DataGrid x:Name="SalesDataGrid"
-                      ItemsSource="{Binding FilteredSales}"
+            <!-- Average Daily Sales -->
+            <Border Grid.Column="2" Background="White" CornerRadius="12" Padding="20" Margin="10" Width="250"
+                    BorderBrush="#DDD" BorderThickness="1">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Average Daily Sales" FontWeight="Bold" FontSize="14" Foreground="#555"/>
+                    <TextBlock Text="{Binding AverageDailySales, StringFormat=£{0:N2}}" FontSize="26" FontWeight="Bold" Foreground="#2B5797" Margin="0,6,0,0"/>
+                    <TextBlock Text="(revenue per day)" FontSize="12" Foreground="Gray"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- DATAGRID -->
+        <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Padding="10">
+            <DataGrid ItemsSource="{Binding FilteredSales}"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       IsReadOnly="True"
-                      Margin="10"
+                      SelectionMode="Single"
+                      Margin="5"
                       AlternatingRowBackground="#FAFAFA"
+                      GridLinesVisibility="Horizontal"
                       RowHeight="32">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=d}" Width="*" />
-                    <DataGridTextColumn Header="JustEat (orders)" Binding="{Binding OrdersJustEat}" Width="*" />
-                    <DataGridTextColumn Header="Uber (orders)" Binding="{Binding OrdersUber}" Width="*" />
-                    <DataGridTextColumn Header="Deliveroo (orders)" Binding="{Binding OrdersDeliveroo}" Width="*" />
-                    <DataGridTextColumn Header="InHouse (orders)" Binding="{Binding OrdersInHouse}" Width="*" />
+                    <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="*" />
                     <DataGridTextColumn Header="JustEat (£)" Binding="{Binding AmountJustEat, StringFormat=£{0:F2}}" Width="*" />
                     <DataGridTextColumn Header="Uber (£)" Binding="{Binding AmountUber, StringFormat=£{0:F2}}" Width="*" />
                     <DataGridTextColumn Header="Deliveroo (£)" Binding="{Binding AmountDeliveroo, StringFormat=£{0:F2}}" Width="*" />
                     <DataGridTextColumn Header="InHouse (£)" Binding="{Binding AmountInhouse, StringFormat=£{0:F2}}" Width="*" />
+                    <DataGridTextColumn Header="Total (£)" Binding="{Binding TotalAmount, StringFormat=£{0:F2}}" Width="*" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
 
-        <!-- Footer -->
-        <Button Grid.Row="4" Content="Exit"
-                Width="100" Height="35"
-                HorizontalAlignment="Right"
-                Margin="0,10,10,0"
-                Background="#444" Foreground="White"
-                Click="Exit_Click"/>
+        <!-- FOOTER -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,15,0,0">
+            <Button Content="Back" Width="120" Height="35" Background="#795548" Foreground="White"
+                    FontWeight="Bold" Margin="0,0,10,0" Click="Exit_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

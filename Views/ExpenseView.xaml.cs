@@ -18,6 +18,14 @@ namespace SalesTrackingSystem.Views
             DataContext = new ExpenseViewModel();
         }
 
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            var homeWindow = new HomeWindow();
+            homeWindow.Show();
+            this.Close();
+        }
+
         private void Print_Click(object sender, RoutedEventArgs e)
         {
             if (!(this.DataContext is ExpenseViewModel vm))

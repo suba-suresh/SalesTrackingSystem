@@ -82,5 +82,10 @@ namespace SalesTrackingSystem.Views
         {
             this.Close();
         }
+
+        private void MonthlyDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

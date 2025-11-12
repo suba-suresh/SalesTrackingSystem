@@ -5,7 +5,7 @@
         Height="480" Width="760"
         MinHeight="440" MinWidth="700"
         Icon="/Images/logo.ico"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         Background="#FAFAFA">
 
     <Grid Margin="20">
@@ -16,11 +16,21 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Weekly Sales Summary"
-                   FontSize="20"
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2B5797" Padding="20" CornerRadius="10" Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Text="Weekly Sales Dashboard"
+                   FontSize="28"
                    FontWeight="Bold"
+                   Foreground="White"
+                   HorizontalAlignment="Center"/>
+                <TextBlock Text="Weekly Sales Report"
+                   FontSize="14"
+                   Foreground="#E0E0E0"
                    HorizontalAlignment="Center"
-                   Margin="0,0,0,10"/>
+                   Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8">
             <TextBlock Text="Week containing:" VerticalAlignment="Center" Margin="0,0,8,0"/>
@@ -41,7 +51,6 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Day" Binding="{Binding Day}" Width="*" />
                     <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="*" />
-                    <DataGridTextColumn Header="Total Orders" Binding="{Binding TotalOrders}" Width="*" />
                     <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat=£{0:F2}}" Width="*" />
                 </DataGrid.Columns>
             </DataGrid>

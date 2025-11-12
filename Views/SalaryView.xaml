@@ -3,169 +3,178 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Employee Salary Management"
         Icon="/Images/logo.ico"
-        Height="650" Width="1000"
-        MinHeight="600" MinWidth="900"
+        Height="700" Width="1200"
+        MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
-        Background="#FAFAFA">
+        Background="#F5F5F5">
 
+    <!-- Main outer grid -->
     <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header -->
-            <RowDefinition Height="Auto"/>
-            <!-- Form -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid -->
-            <RowDefinition Height="Auto"/>
-            <!-- Footer -->
         </Grid.RowDefinitions>
 
-        <!-- HEADER -->
-        <TextBlock Grid.Row="0"
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                    Text="Employee Salary Management"
                    FontSize="26"
                    FontWeight="Bold"
-                   Foreground="#333"
-                   Margin="0,0,0,10"/>
+                   Foreground="#2B5797"
+                   Margin="0,0,0,15"/>
 
-        <!-- FORM -->
-        <Border Grid.Row="1"
-                Background="White"
-                CornerRadius="10"
-                Padding="20"
-                BorderBrush="#DDD"
-                BorderThickness="1"
-                Margin="0,10,0,20">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel Orientation="Vertical">
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="380" MaxWidth="450"/>
+                <ColumnDefinition Width="15" />
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                    <!-- EMPLOYEE NAME -->
-                    <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <TextBlock Text="Employee Name:" Width="160" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding EmployeeName, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="250"
-                                 Height="28"
-                                 Margin="0,0,10,0"/>
+            <!-- Left Form -->
+            <Border Grid.Column="0"
+                    Background="White"
+                    CornerRadius="10"
+                    Padding="20"
+                    BorderBrush="#DDD"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Form Inputs -->
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Add / Edit Salary"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="#2B5797"
+                                       Margin="0,0,0,10"/>
+
+                            <!-- Employee Name -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Employee Name:" Width="150" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding EmployeeName, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                            </StackPanel>
+
+                            <!-- Hourly Rate -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Hourly Rate:" Width="150" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding HourlyRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" Width="200"/>
+                            </StackPanel>
+
+                            <!-- Hours Worked -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Hours Worked:" Width="150" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding HoursWorked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                            </StackPanel>
+
+                            <!-- Total Pay -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Total Pay:" Width="150" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding TotalPay, StringFormat=£{0:N2}}" 
+                                         Width="200" 
+                                         IsReadOnly="True" 
+                                         Background="#F0F0F0"/>         
+
+                            </StackPanel>
+
+                            <!-- Pay Date -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Pay Date:" Width="150" VerticalAlignment="Center"/>
+                                <DatePicker SelectedDate="{Binding PayDate}" Width="200"/>
+                            </StackPanel>
+
+                            <!-- Notes -->
+                            <StackPanel Orientation="Horizontal" Margin="0,8">
+                                <TextBlock Text="Notes:" Width="150" VerticalAlignment="Top"/>
+                                <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="250" Height="60" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Buttons -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                                <Button Content="Add" Command="{Binding AddCommand}" Width="100" Height="35" Margin="6"
+                                        Background="#4CAF50" Foreground="White"/>
+                                <Button Content="Update" Command="{Binding UpdateCommand}" Width="100" Height="35" Margin="6"
+                                        Background="#2196F3" Foreground="White"/>
+                                <Button Content="Delete" Command="{Binding DeleteCommand}" Width="100" Height="35" Margin="6"
+                                        Background="#F44336" Foreground="White"/>
+                                <Button Content="Clear" Command="{Binding ClearCommand}" Width="100" Height="35" Margin="6"
+                                        Background="#9E9E9E" Foreground="White"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Footer Buttons (Back, Print, Exit) -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                    
+                        <Button Content="Print" Command="{Binding PrintCommand}" Width="100" Height="35" Margin="4"
+                                Background="#E91E63" Foreground="White" FontWeight="Bold" Cursor="Hand" BorderThickness="0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="10,8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Content="Back" Width="100" Height="35" Margin="4"
+                                Background="#444" Foreground="White" Cursor="Hand" BorderThickness="0"
+                                Click="Exit_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="10,8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </StackPanel>
+                </Grid>
+            </Border>
 
-                    <!-- HOURLY RATE -->
-                    <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <TextBlock Text="Hourly Rate:" Width="160" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding HourlyRate, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="150"
-                                 Height="28"
-                                 Margin="0,0,10,0"/>
-                    </StackPanel>
+            <!-- Right DataGrid -->
+            <Border Grid.Column="2"
+                    Background="White"
+                    CornerRadius="10"
+                    BorderBrush="#DDD"
+                    BorderThickness="1">
+                <Grid>
+                   
 
-                    <!-- HOURS WORKED -->
-                    <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <TextBlock Text="Hours Worked:" Width="160" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding HoursWorked, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="150"
-                                 Height="28"
-                                 Margin="0,0,10,0"/>
-                    </StackPanel>
-
-                    <!-- TOTAL PAY -->
-                    <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <TextBlock Text="Total Pay:" Width="160" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding TotalPay}"
-                                 Width="150"
-                                 Height="28"
-                                 IsReadOnly="True"
-                                 Background="#F0F0F0"
-                                 Margin="0,0,10,0"/>
-                    </StackPanel>
-
-                    <!-- PAY DATE -->
-                    <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <TextBlock Text="Pay Date:" Width="160" VerticalAlignment="Center"/>
-                        <DatePicker SelectedDate="{Binding PayDate}" Width="200" Height="28"/>
-                    </StackPanel>
-
-                    <!-- NOTES -->
-                    <StackPanel Orientation="Horizontal" Margin="0,8">
-                        <TextBlock Text="Notes:" Width="160" VerticalAlignment="Top"/>
-                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="350"
-                                 Height="60"
-                                 AcceptsReturn="True"
-                                 TextWrapping="Wrap"/>
-                    </StackPanel>
-
-                    <!-- BUTTONS -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                        <Button Content="Add"
-                                Width="100" Height="32"
-                                Background="#4CAF50"
-                                Foreground="White"
-                                Command="{Binding AddCommand}"
-                                Margin="6,0"/>
-                        <Button Content="Update"
-                                Width="100" Height="32"
-                                Background="#2196F3"
-                                Foreground="White"
-                                Command="{Binding UpdateCommand}"
-                                Margin="6,0"/>
-                        <Button Content="Delete"
-                                Width="100" Height="32"
-                                Background="#F44336"
-                                Foreground="White"
-                                Command="{Binding DeleteCommand}"
-                                Margin="6,0"/>
-                        <Button Content="Clear"
-                                Width="100" Height="32"
-                                Background="#9E9E9E"
-                                Foreground="White"
-                                Command="{Binding ClearCommand}"
-                                Margin="6,0"/>
-                    </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
-
-        <!-- DATAGRID -->
-        <Border Grid.Row="2" Background="White" CornerRadius="8"
-                BorderBrush="#DDD" BorderThickness="1" Margin="0,0,0,10">
-            <DataGrid x:Name="SalaryDataGrid"
-                      ItemsSource="{Binding Salaries}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      SelectionMode="Single"
-                      SelectedItem="{Binding SelectedSalary, Mode=TwoWay}"
-                      Margin="10"
-                      AlternatingRowBackground="#FAFAFA"
-                      GridLinesVisibility="Horizontal"
-                      RowHeaderWidth="0"
-                      RowHeight="30">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Employee" Binding="{Binding Employee.Name}" Width="*" />
-                    <DataGridTextColumn Header="Hourly Rate (£)" Binding="{Binding HourlyRate, StringFormat={}{0:F2}}" Width="120" />
-                    <DataGridTextColumn Header="Hours Worked" Binding="{Binding HoursWorked}" Width="120" />
-                    <DataGridTextColumn Header="Total Pay (£)" Binding="{Binding TotalPay, StringFormat={}{0:F2}}" Width="120" />
-                    <DataGridTextColumn Header="Pay Date" Binding="{Binding PayDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Width="160" />
-                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="2*" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
-
-        <!-- FOOTER BUTTONS -->
-        <StackPanel Grid.Row="3"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="0,10,0,0">
-            <Button Content="Print"
-                    Width="120" Height="35"
-                    Background="#E91E63"
-                    Foreground="White"
-                    Command="{Binding PrintCommand}"
-                    Margin="6,0"/>
-            <Button Content="Exit"
-                    Width="120" Height="35"
-                    Background="#444"
-                    Foreground="White"
-                    Click="Exit_Click"
-                    Margin="6,0"/>
-        </StackPanel>
+                    <!-- DataGrid -->
+                    <DataGrid ItemsSource="{Binding Salaries}"
+                              SelectedItem="{Binding SelectedSalary, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              Margin="10"
+                              AlternatingRowBackground="#FAFAFA"
+                              GridLinesVisibility="Horizontal"
+                              RowHeight="32"
+                              EnableRowVirtualization="True"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Employee" Binding="{Binding Employee.Name}" Width="*" />
+                            <DataGridTextColumn Header="Hourly Rate (£)" Binding="{Binding HourlyRate}" Width="*" />
+                            <DataGridTextColumn Header="Hours Worked" Binding="{Binding HoursWorked}" Width="*" />
+                            <DataGridTextColumn Header="Total Pay (£)" Binding="{Binding TotalPay}" Width="*" />
+                            <DataGridTextColumn Header="Total Pay (£)" Binding="{Binding TotalPay, StringFormat=£{0:N2}}" Width="*" />
+                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>
